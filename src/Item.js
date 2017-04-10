@@ -10,10 +10,19 @@ import { DragSource, DropTarget } from 'react-dnd';
 
 const itemSource = {
   beginDrag(props, monitor) {
-    props.setTempDraggingItem(props.boxIndex, props.index);
+    // console.log(props);
+    // props.setTempDraggingItem(props.boxIndex, props.index);
     return {
       boxIndex: props.boxIndex,
-      index: props.index
+      index: props.index,
+      item: props.item
+    };
+  },
+  endDrag(props, monitor) {
+    return {
+      boxIndex: props.boxIndex,
+      index: props.index,
+      item: props.item
     };
   }
 };
@@ -52,7 +61,9 @@ const itemTarget = {
     }
 
     // Time to actually perform the action
-    props.moveItem(dragIndex, hoverIndex, oldBoxIndex);
+    console.clear();
+    console.log('1. Hover. Get parameters and call move function');
+    props.moveItem(dragIndex, hoverIndex, oldBoxIndex, monitor.getItem().item);
 
     monitor.getItem().index = hoverIndex;
   }
@@ -106,56 +117,52 @@ class Item extends Component {
   render() {
     const { index, boxIndex, isDropped, isDragging, connectDragSource, connectDropTarget } = this.props;
 
-    let editTask = () => null;
-    let task = () => null;
+    let task = null;
 
 
     if (this.editing) {
-      editTask = () => {
-        return (
-          <FormGroup>
-            <InputGroup>
-              <FormControl
-                type="text"
-                placeholder="Type in task here"
-                onChange={(e) => {this.changeInput(e)}}
-                value={this.input}
-              />
-              <InputGroup.Button>
-              <Button
-                bsStyle="success"
-                onClick={this.handleEditEvent.bind(this)}
-              ><FontAwesome name='check' /></Button>
-              <Button
-                bsStyle="danger"
-                onClick={this.toggleEditing.bind(this)}
-              ><FontAwesome name='undo' /></Button>
-              </InputGroup.Button>
-            </InputGroup>
-          </FormGroup>
-        );
-      };
+      task =
+        <FormGroup>
+          <InputGroup>
+            <FormControl
+              type="text"
+              placeholder="Type in task here"
+              onChange={(e) => {this.changeInput(e)}}
+              value={this.input}
+            />
+            <InputGroup.Button>
+            <Button
+              bsStyle="success"
+              onClick={this.handleEditEvent.bind(this)}
+            ><FontAwesome name='check' /></Button>
+            <Button
+              bsStyle="danger"
+              onClick={this.toggleEditing.bind(this)}
+            ><FontAwesome name='undo' /></Button>
+            </InputGroup.Button>
+          </InputGroup>
+        </FormGroup>
     } else {
       if (this.props.item !== 'No tasks') {
-        task = () => {
-          return connectDragSource(connectDropTarget(
+        task =
+          connectDragSource(connectDropTarget(
             <div className={isDragging ? 'draggin' : ''}>
               <span>{(this.props.index + 1) + '. ' + this.props.item}</span>
               <div className="pull-right item-buttons">
                 <Button bsStyle="primary" onClick={this.toggleEditing.bind(this)}><FontAwesome name='pencil' /></Button>
-                <Button bsStyle="danger" onClick={() => this.props.removeItem(this.props.index)}><FontAwesome name='remove' /></Button>
+                <Button bsStyle="danger" onClick={() => this.props.removeItem(this.props.index)}>
+                  <FontAwesome name='remove' />
+                </Button>
               </div>
             </div>
           ));
-        };
       } else {
-        task = () => {
-          return (
+        task =
+          connectDropTarget(
             <div className={'empty-box'}>
               <span>{this.props.item}</span>
             </div>
           );
-        };
       }
     }
 
@@ -163,8 +170,7 @@ class Item extends Component {
       <ListGroupItem
         key={this.props.index}
       >
-        {task()}
-        {editTask()}
+        {task}
       </ListGroupItem>
     );
   }

@@ -41,18 +41,21 @@ class ItemContainer extends Component {
         this.items.splice(index, 1);
         this.props.saveChanges();
       },
-      moveItem(dragIndex, hoverIndex, oldBoxIndex) {
-        // if (oldBoxIndex === this.props.boxIndex) {
-        //   const dragItem = this.items[dragIndex];
-        //   this.items.splice(dragIndex, 1);
-        //   this.items.splice(hoverIndex, 0 , dragItem);
-        //
-        //   this.props.saveToLocalStorage();
-        // } else {
-          this.props.moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, this.props.boxIndex);
-        // }
+      moveItem(dragIndex, hoverIndex, oldBoxIndex, name) {
+        console.log('2. Movin\'');
+        const newBoxIndex = this.props.boxIndex;
+        // console.log({dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, name});
+        if (oldBoxIndex === this.props.boxIndex) {
+          console.log('2.1. The same box');
+          const dragItem = this.items[dragIndex];
+          this.items.splice(dragIndex, 1);
+          this.items.splice(hoverIndex, 0 , dragItem);
 
-        // this.setTempDraggingItem(oldBoxIndex, hoverIndex);
+          this.props.saveToLocalStorage();
+        } else {
+          console.log('2.2. Different box');
+          this.props.moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, this.props.boxIndex, name);
+        }
       },
       setTempDraggingItem(oldBoxIndex, oldIndex) {
         this.props.moveToAnotherBox(oldBoxIndex, oldIndex);
@@ -92,6 +95,7 @@ class ItemContainer extends Component {
         item={'No tasks'}
         type={ItemTypes.TASK}
         boxIndex={this.props.boxIndex}
+        moveItem={this.moveItem.bind(this)}
       />
     }
 

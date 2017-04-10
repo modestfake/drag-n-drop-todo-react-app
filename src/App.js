@@ -59,41 +59,41 @@ class App extends Component {
   }
 
   moveItem(source, newBox) {
-    console.log('Run on drop');
-    const droppedItemObj = this.lastDroppedItem;
-    // console.log(this.boxes[source.boxIndex].items[source.index]);
-    if (this.boxes[newBox].length) {
-
-    } else {
-      // this.boxes[source.boxIndex].items.splice(source.index, 1);
-      // this.boxes[newBox].items.push(itemToMove);
-    }
-    // console.log(droppedItemObj, newBox);
-
+    // const droppedItemObj = this.lastDroppedItem;
+    //
     // const itemToMove = this.boxes[source.boxIndex].items[source.index];
-    // this.boxes[source.boxIndex].items.splice(source.index, 1);
-    // this.boxes[newBox].items.push(itemToMove);
+    //
+    // let hasThisItem = this.boxes[newBox].items.find((element) => element === itemToMove);
+    // console.log(itemToMove);
+    // if (!hasThisItem) {
+    //   this.boxes[source.boxIndex].items.splice(source.index, 1);
+    //   this.boxes[newBox].items.push(itemToMove);
+    // }
 
     // this.lastDroppedItem = {};
     // this.saveToLocalStorage();
   }
 
-  moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, newBoxIndex) {
-    let prevBoxIndex;
-    if (typeof this.lastDroppedItem !== 'undefined') {
-      prevBoxIndex = this.lastDroppedItem.oldBoxIndex;
-    } else {
-      prevBoxIndex = oldBoxIndex;
+  moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, name) {
+    console.log('3. Check if item already exists');
+    let prevIndex;
+    this.boxes[oldBoxIndex].items.find((element, index) => {
+      element === name ? prevIndex = index : undefined;
+    });
+
+    let hasThisItem = this.boxes[newBoxIndex].items.find((element) => element === name);
+
+    if (!hasThisItem) {
+      console.log('4. Item doesn\'t exist so moved here');
+      this.boxes[oldBoxIndex].items.splice(prevIndex, 1);
+      this.boxes[newBoxIndex].items.splice(hoverIndex, 0, name);
+
+      this.saveToLocalStorage();
     }
-    console.log({dragIndex, hoverIndex, oldBoxIndex, newBoxIndex});
-
-    // const draggedItem = this.boxes[prevBoxIndex].items[oldIndex];
-    // this.lastDroppedItem = {oldBoxIndex, draggedItem};
-
   }
 
   saveToLocalStorage() {
-    localStorage.setItem('tasks', JSON.stringify(this.boxes));
+    window.localStorage.setItem('tasks', JSON.stringify(this.boxes));
   }
 
   render() {
