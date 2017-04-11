@@ -48,47 +48,47 @@ class App extends Component {
     let boxes = JSON.parse(window.localStorage.getItem('tasks'));
 
     extendObservable(this, {
-      boxes: boxes,
-      lastDraggedItem: {}
+      boxes: boxes
     });
   }
 
   addItem(text) {
-    this.boxes[2].items.push(text);
+    const id = new Date().getTime();
+    this.boxes[2].items.push({id, text});
     this.saveToLocalStorage();
   }
 
-  moveItem(source, newBox) {
-    // const droppedItemObj = this.lastDroppedItem;
-    //
-    // const itemToMove = this.boxes[source.boxIndex].items[source.index];
-    //
-    // let hasThisItem = this.boxes[newBox].items.find((element) => element === itemToMove);
-    // console.log(itemToMove);
-    // if (!hasThisItem) {
-    //   this.boxes[source.boxIndex].items.splice(source.index, 1);
-    //   this.boxes[newBox].items.push(itemToMove);
-    // }
+  findTaskById(itemId, oldBoxIndex) {
+    if (this.boxes[oldBoxIndex].items.length === 0) {
+      return false;
+    }
 
-    // this.lastDroppedItem = {};
-    // this.saveToLocalStorage();
+    this.boxes[oldBoxIndex].items.findIndex((el) => el.id === itemId);
+
+    return false;
   }
 
-  moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, name) {
-    console.log('3. Check if item already exists');
-    let prevIndex;
-    this.boxes[oldBoxIndex].items.find((element, index) => {
-      element === name ? prevIndex = index : undefined;
-    });
+  moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, itemId) {
+    if (typeof hoverIndex === 'undefined' && !this.boxes[newBoxIndex].items.length) {
+      const currentItem = this.boxes[oldBoxIndex].items[dragIndex];
+      if (currentItem.id === itemId) {
+        this.boxes[oldBoxIndex].items.splice(dragIndex, 1);
+        this.boxes[newBoxIndex].items.push(currentItem);
+      }
+    } else {
+      if (typeof dragIndex !== 'undefined' && this.boxes[oldBoxIndex].items.length) {
+        const currentItem = this.boxes[oldBoxIndex].items[dragIndex];
+        if (currentItem.id === itemId) {
+          this.boxes[oldBoxIndex].items.splice(dragIndex, 1);
+          this.boxes[newBoxIndex].items.splice(hoverIndex, 0, currentItem);
+        }
 
-    let hasThisItem = this.boxes[newBoxIndex].items.find((element) => element === name);
-
-    if (!hasThisItem) {
-      console.log('4. Item doesn\'t exist so moved here');
-      this.boxes[oldBoxIndex].items.splice(prevIndex, 1);
-      this.boxes[newBoxIndex].items.splice(hoverIndex, 0, name);
-
-      this.saveToLocalStorage();
+        // console.log('Before:', oldBoxIndex);
+        // if (!this.findTaskById(itemId, oldBoxIndex)) {
+        //   oldBoxIndex = newBoxIndex;
+        // }
+        // console.log('After:', oldBoxIndex);
+      }
     }
   }
 
@@ -105,10 +105,8 @@ class App extends Component {
         accepts={[ItemTypes.TASK]}
         items={el.items}
         boxIndex={index}
-        onDrop={this.moveItem.bind(this)}
-        saveChanges={this.saveToLocalStorage.bind(this)}
+        saveChanges={this.saveToLocalStorage}
         moveToAnotherBox={this.moveToAnotherBox.bind(this)}
-        saveToLocalStorage={this.saveToLocalStorage.bind(this)}
       />
       {index % 2 === 1 && <Clearfix />}
       </div>

@@ -13,7 +13,7 @@ const itemTarget = {
     const source = monitor.getItem();
 
     if (source.boxIndex !== props.boxIndex) {
-      props.onDrop(source, props.boxIndex);
+      // props.onDrop(source, props.boxIndex);
     }
   }
 };
@@ -34,31 +34,24 @@ class ItemContainer extends Component {
     extendObservable(this, {
       items: this.props.items,
       editItem(index, value) {
-        this.items[index] = value;
+        this.items[index].text = value;
         this.props.saveChanges();
       },
       removeItem(index) {
         this.items.splice(index, 1);
         this.props.saveChanges();
       },
-      moveItem(dragIndex, hoverIndex, oldBoxIndex, name) {
-        console.log('2. Movin\'');
+      sortInsideBox(dragIndex, hoverIndex, oldBoxIndex, itemId) {
         const newBoxIndex = this.props.boxIndex;
-        // console.log({dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, name});
-        if (oldBoxIndex === this.props.boxIndex) {
-          console.log('2.1. The same box');
-          const dragItem = this.items[dragIndex];
-          this.items.splice(dragIndex, 1);
-          this.items.splice(hoverIndex, 0 , dragItem);
-
-          this.props.saveToLocalStorage();
+        if (newBoxIndex === oldBoxIndex) {
+          if (typeof dragIndex !== 'undefined') {
+            const currentItem = this.items[dragIndex];
+            this.items.splice(dragIndex, 1);
+            this.items.splice(hoverIndex, 0, currentItem);
+          }
         } else {
-          console.log('2.2. Different box');
-          this.props.moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, this.props.boxIndex, name);
+          this.props.moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, itemId);
         }
-      },
-      setTempDraggingItem(oldBoxIndex, oldIndex) {
-        this.props.moveToAnotherBox(oldBoxIndex, oldIndex);
       }
     });
   }
@@ -67,12 +60,11 @@ class ItemContainer extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     isOver: PropTypes.bool.isRequired,
     canDrop: PropTypes.bool.isRequired,
-    lastDroppedItem: PropTypes.object,
-    onDrop: PropTypes.func.isRequired
+    lastDroppedItem: PropTypes.object
   };
 
   render() {
-    const { isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
+    const { isOver, canDrop, connectDropTarget } = this.props;
 
     let items = null;
 
@@ -86,16 +78,15 @@ class ItemContainer extends Component {
           boxIndex={this.props.boxIndex}
           editItem={this.editItem.bind(this)}
           removeItem={this.removeItem.bind(this)}
-          moveItem={this.moveItem.bind(this)}
-          setTempDraggingItem={this.setTempDraggingItem.bind(this)}
+          sortInsideBox={this.sortInsideBox.bind(this)}
         />
       );
     } else {
       items = <Item
-        item={'No tasks'}
+        item={{id: 0, text: 'No tasks'}}
         type={ItemTypes.TASK}
         boxIndex={this.props.boxIndex}
-        moveItem={this.moveItem.bind(this)}
+        sortInsideBox={this.sortInsideBox.bind(this)}
       />
     }
 
