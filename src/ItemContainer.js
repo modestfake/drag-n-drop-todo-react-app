@@ -48,6 +48,8 @@ class ItemContainer extends Component {
             const currentItem = this.items[dragIndex];
             this.items.splice(dragIndex, 1);
             this.items.splice(hoverIndex, 0, currentItem);
+
+            this.props.saveChanges();
           }
         } else {
           this.props.moveToAnotherBox(dragIndex, hoverIndex, oldBoxIndex, newBoxIndex, itemId);

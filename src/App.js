@@ -90,6 +90,8 @@ class App extends Component {
         // console.log('After:', oldBoxIndex);
       }
     }
+
+    this.saveToLocalStorage();
   }
 
   saveToLocalStorage() {
