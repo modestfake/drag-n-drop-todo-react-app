@@ -1,14 +1,29 @@
 export const addTask = (value) => ({
   type: 'ADD_TASK',
+  item: {
+    id: new Date().getTime(),
+    text: value,
+    editing: false
+  }
+})
+
+export const toggleEditingTask = (box, taskIndex) => ({
+  type: 'TOGGLE_EDITING_TASK',
+  box,
+  taskIndex
+})
+
+export const editTask = (box, taskIndex, value) => ({
+  type: 'EDIT_TASK',
+  box,
+  taskIndex,
   value
 })
 
-export const editTask = () => ({
-  type: 'EDIT_TASK'
-})
-
-export const removeTask = () => ({
-  type: 'REMOVE_TASK'
+export const removeTask = (box, taskIndex) => ({
+  type: 'REMOVE_TASK',
+  box,
+  taskIndex
 })
 
 export const moveTask = () => ({

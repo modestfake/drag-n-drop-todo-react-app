@@ -1,11 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { findDOMNode } from 'react-dom';
+import ReactDOM, { findDOMNode } from 'react-dom'
 import { ListGroupItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-
-import {extendObservable} from 'mobx';
-import {observer} from 'mobx-react';
-
 import { DragSource, DropTarget } from 'react-dnd';
 
 const itemSource = {
@@ -84,22 +80,10 @@ class Item extends Component {
   constructor(props) {
     super(props);
 
-    extendObservable(this, {
-      input: this.props.item.text,
-      editing: false,
-      changeInput(e) {
-        this.input = e.target.value;
-      },
-      toggleEditing() {
-        this.editing = !this.editing;
-      },
-      handleEditEvent() {
-        if (this.input !== '') {
-          this.props.editItem(this.props.index, this.input);
-          this.toggleEditing();
-        }
-      }
-    });
+    this.toggleEditing = this.toggleEditing.bind(this)
+    this.editTask = this.editTask.bind(this)
+    this.removeTask = this.removeTask.bind(this)
+    this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
   static propTypes = {
@@ -108,32 +92,56 @@ class Item extends Component {
     index: PropTypes.number.isRequired,
     boxIndex: PropTypes.number.isRequired,
     isDropped: PropTypes.bool.isRequired,
-  };
+  }
+
+  toggleEditing () {
+    this.props.toggleEditingTask(this.props.boxIndex, this.props.index)
+    if (!this.props.item.editing) {
+      setTimeout(() => ReactDOM.findDOMNode(this.input).focus(), 0)
+    }
+  }
+
+  editTask () {
+    const newValue = ReactDOM.findDOMNode(this.input).value
+    this.props.editTask(this.props.boxIndex, this.props.index, newValue)
+  }
+
+  removeTask () {
+    this.props.removeTask(this.props.boxIndex, this.props.index)
+  }
+
+  handleKeyPress (e) {
+    if (e.key === 'Enter') {
+      this.handleEdit()
+    }
+  }
 
   render() {
     const { isDragging, connectDragSource, connectDropTarget } = this.props;
 
+    const taskText = this.props.item.text
+    const editing = this.props.item.editing
     let task = null;
 
-
-    if (this.editing) {
+    if (editing) {
       task =
         <FormGroup>
           <InputGroup>
             <FormControl
               type="text"
               placeholder="Type in task here"
-              onChange={(e) => {this.changeInput(e)}}
-              value={this.input}
+              defaultValue={taskText}
+              onKeyPress={this.handleKeyPress}
+              ref={(input) => this.input = input}
             />
             <InputGroup.Button>
               <Button
                 bsStyle="success"
-                onClick={this.handleEditEvent.bind(this)}
+                onClick={this.editTask}
               ><FontAwesome name='check' /></Button>
               <Button
                 bsStyle="danger"
-                onClick={this.toggleEditing.bind(this)}
+                onClick={this.toggleEditing}
               ><FontAwesome name='undo' /></Button>
             </InputGroup.Button>
           </InputGroup>
@@ -143,12 +151,12 @@ class Item extends Component {
         task =
           connectDragSource(connectDropTarget(
             <div className={isDragging ? 'draggin' : ''}>
-              <span>{(this.props.index + 1) + '. ' + this.props.item.text}</span>
+              <span>{(this.props.index + 1) + '. ' + taskText}</span>
               <div className="pull-right item-buttons">
-                <Button bsStyle="primary" onClick={this.toggleEditing.bind(this)}>
+                <Button bsStyle="primary" onClick={this.toggleEditing}>
                   <FontAwesome name='pencil' />
                 </Button>
-                <Button bsStyle="danger" onClick={() => this.props.removeItem(this.props.index)}>
+                <Button bsStyle="danger" onClick={this.removeTask}>
                   <FontAwesome name='remove' />
                 </Button>
               </div>
@@ -158,7 +166,7 @@ class Item extends Component {
         task =
           connectDropTarget(
             <div className={'empty-box'}>
-              <span>{this.props.item.text}</span>
+              <span>{taskText}</span>
             </div>
           );
       }
@@ -179,4 +187,4 @@ Item.propTypes = {
   isDragging: PropTypes.bool.isRequired
 };
 
-export default DragSource(props => props.type, itemSource, collectSource)(DropTarget(props => props.type, itemTarget, collectTarget)(observer(Item)));
+export default DragSource(props => props.type, itemSource, collectSource)(DropTarget(props => props.type, itemTarget, collectTarget)(Item));

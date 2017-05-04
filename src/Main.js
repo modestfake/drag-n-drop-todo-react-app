@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import ItemContainer from './ItemContainer'
+import Box from './Box'
 import AddItemForm from './components/AddItemForm'
 import { Grid, Row, Clearfix } from 'react-bootstrap'
 
@@ -29,9 +29,6 @@ const boxesMeta = [
 ]
 
 class Main extends Component {
-  componentDidMount () {
-    this.props.addTask('fdggdfg')
-  }
   addItem (text) {
     const id = new Date().getTime()
     this.boxes[2].items.push({id, text})
@@ -81,7 +78,7 @@ class Main extends Component {
   render () {
     const containers = boxesMeta.map((el, index) =>
       <div key={index.toString()}>
-        <ItemContainer
+        <Box
           heading={el.heading}
           bsStyle={el.bsStyle}
           accepts={[ItemTypes.TASK]}
@@ -89,6 +86,7 @@ class Main extends Component {
           boxIndex={index}
           saveChanges={this.saveToLocalStorage}
           moveToAnotherBox={this.moveToAnotherBox.bind(this)}
+          {...this.props}
       />
         {index % 2 === 1 && <Clearfix />}
       </div>
