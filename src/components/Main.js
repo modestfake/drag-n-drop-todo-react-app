@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 
 import Box from './Box'
 import AddItemForm from './AddItemForm'
 import { Grid, Row, Clearfix } from 'react-bootstrap'
+import Dragula from 'react-dragula'
 
 import ItemTypes from '../ItemTypes.js'
 
@@ -75,6 +77,29 @@ class Main extends Component {
     window.localStorage.setItem('tasks', JSON.stringify(this.boxes))
   }
 
+  componentDidMount () {
+    let containers = []
+    const refKeys = Object.keys(this.refs)
+    refKeys.forEach((key, index) => {
+      const listComponent = this.refs[key].refs[`list${index}`]
+      ReactDOM.findDOMNode(listComponent).setAttribute('boxIndex', index)
+      containers.push(ReactDOM.findDOMNode(listComponent))
+    })
+
+    const options = {}
+    const dragula = Dragula(containers, options)
+    // console.log(container)
+    dragula.on('drop', (el, target, source, sibling) => {
+      console.log({el, target, source, sibling})
+      const prevBoxIndex = Number(source.getAttribute('boxIndex'))
+      const newBoxIndex = Number(target.getAttribute('boxIndex'))
+      const prevItemIndex = Number(el.getAttribute('boxIndex'))
+      const newItemIndex = Number(sibling.getAttribute('boxIndex') - 1)
+      console.log({prevBoxIndex, newBoxIndex, prevItemIndex, newItemIndex})
+      // Fix sibling nu,ber
+    })
+  }
+
   render () {
     const containers = boxesMeta.map((el, index) =>
       <div key={index.toString()}>
@@ -86,11 +111,13 @@ class Main extends Component {
           boxIndex={index}
           saveChanges={this.saveToLocalStorage}
           moveToAnotherBox={this.moveToAnotherBox.bind(this)}
+          ref={`box${index}`}
           {...this.props}
-      />
+        />
         {index % 2 === 1 && <Clearfix />}
       </div>
     )
+
     return (
       <div className='App'>
         <div className='App-header'>
@@ -101,7 +128,7 @@ class Main extends Component {
           <Row>
             <AddItemForm addItem={this.props.addTask} />
           </Row>
-          <Row>
+          <Row ref={row => this.boxes = row}>
             {containers}
           </Row>
         </Grid>

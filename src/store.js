@@ -13,7 +13,6 @@ const store = createStore(
 
 store.subscribe(throttle(() => {
   saveState(store.getState())
-  console.log('Saved')
 }), 1000)
 
 export default store

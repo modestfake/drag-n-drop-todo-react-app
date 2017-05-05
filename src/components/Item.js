@@ -6,6 +6,7 @@ import { DragSource, DropTarget } from 'react-dnd'
 
 const itemSource = {
   beginDrag(props, monitor) {
+    console.log('Start')
     return {
       boxIndex: props.boxIndex,
       index: props.index,
@@ -13,6 +14,7 @@ const itemSource = {
     }
   },
   endDrag(props, monitor) {
+    console.log('End')
     return {
       boxIndex: props.boxIndex,
       index: props.index,
@@ -86,13 +88,13 @@ class Item extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this)
   }
 
-  static propTypes = {
-    connectDragSource: PropTypes.func.isRequired,
-    isDragging: PropTypes.bool.isRequired,
-    index: PropTypes.number.isRequired,
-    boxIndex: PropTypes.number.isRequired,
-    isDropped: PropTypes.bool.isRequired
-  }
+  // static propTypes = {
+  //   connectDragSource: PropTypes.func.isRequired,
+  //   isDragging: PropTypes.bool.isRequired,
+  //   index: PropTypes.number.isRequired,
+  //   boxIndex: PropTypes.number.isRequired,
+  //   isDropped: PropTypes.bool.isRequired
+  // }
 
   toggleEditing () {
     this.props.toggleEditingTask(this.props.boxIndex, this.props.index)
@@ -117,7 +119,7 @@ class Item extends Component {
   }
 
   render() {
-    const { isDragging, connectDragSource, connectDropTarget } = this.props
+    // const { isDragging, connectDragSource, connectDropTarget } = this.props
 
     const taskText = this.props.item.text
     const editing = this.props.item.editing
@@ -150,8 +152,9 @@ class Item extends Component {
       if (this.props.item.id !== 0) {
         task =
           // connectDragSource(connectDropTarget(
-          connectDragSource(
-            <div className={isDragging ? 'draggin' : ''}>
+          // connectDragSource(
+            // <div className={isDragging ? 'draggin' : ''}>
+            <div>
               <span>{(this.props.index + 1) + '. ' + taskText}</span>
               <div className="pull-right item-buttons">
                 <Button bsStyle="primary" onClick={this.toggleEditing}>
@@ -162,14 +165,14 @@ class Item extends Component {
                 </Button>
               </div>
             </div>
-          );
+          // );
       } else {
         task =
-          connectDropTarget(
+          // connectDropTarget(
             <div className={'empty-box'}>
               <span>{taskText}</span>
             </div>
-          )
+          // )
       }
     }
 
@@ -183,9 +186,10 @@ class Item extends Component {
   }
 }
 
-Item.propTypes = {
-  connectDragSource: PropTypes.func.isRequired,
-  isDragging: PropTypes.bool.isRequired
-}
+// Item.propTypes = {
+//   connectDragSource: PropTypes.func.isRequired,
+//   isDragging: PropTypes.bool.isRequired
+// }
 
-export default DragSource(props => props.type, itemSource, collectSource)(DropTarget(props => props.type, itemTarget, collectTarget)(Item))
+// export default DragSource(props => props.type, itemSource, collectSource)(DropTarget(props => props.type, itemTarget, collectTarget)(Item))
+export default Item

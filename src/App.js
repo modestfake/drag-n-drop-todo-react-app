@@ -3,8 +3,8 @@ import { bindActionCreators } from 'redux'
 import * as actionCreators from './actions/actionCreator'
 import Main from './components/Main'
 
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+// import { DragDropContext } from 'react-dnd'
+// import HTML5Backend from 'react-dnd-html5-backend'
 
 const mapStateToProps = (state) => {
   return {
@@ -21,4 +21,5 @@ const App = connect(
   mapDispatchToProps
 )(Main)
 
-export default DragDropContext(HTML5Backend)(App)
+// export default DragDropContext(HTML5Backend)(App)
+export default App
