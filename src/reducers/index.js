@@ -35,6 +35,8 @@ const box = (state, action) => {
         if (index !== action.taskIndex) {
           return item
         }
+
+        return false
       })
     default:
       return state

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as actionCreators from './actions/actionCreator'
-import Main from './Main'
+import Main from './components/Main'
 
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'

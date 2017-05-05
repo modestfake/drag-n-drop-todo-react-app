@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 import ReactDOM, { findDOMNode } from 'react-dom'
-import { ListGroupItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
-import FontAwesome from 'react-fontawesome';
-import { DragSource, DropTarget } from 'react-dnd';
+import { ListGroupItem, FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap'
+import FontAwesome from 'react-fontawesome'
+import { DragSource, DropTarget } from 'react-dnd'
 
 const itemSource = {
   beginDrag(props, monitor) {
@@ -10,37 +10,37 @@ const itemSource = {
       boxIndex: props.boxIndex,
       index: props.index,
       id: props.item.id
-    };
+    }
   },
   endDrag(props, monitor) {
     return {
       boxIndex: props.boxIndex,
       index: props.index,
       id: props.item.id
-    };
+    }
   }
-};
+}
 
 const itemTarget = {
   hover(props, monitor, component) {
-    const dragIndex = monitor.getItem().index;
-    const oldBoxIndex = monitor.getItem().boxIndex;
-    const itemId = monitor.getItem().id;
-    const hoverIndex = props.index;
+    const dragIndex = monitor.getItem().index
+    const oldBoxIndex = monitor.getItem().boxIndex
+    const itemId = monitor.getItem().id
+    const hoverIndex = props.index
 
     // Don't replace items with themselves
     if (dragIndex === hoverIndex) {
-      return;
+      return
     }
 
     // Determine rectangle on screen
-    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
+    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect()
 
     // Get vertical middle
-    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
 
     // Determine mouse position
-    const clientOffset = monitor.getClientOffset();
+    const clientOffset = monitor.getClientOffset()
 
     // Get pixels to the top
     const hoverClientY = clientOffset.y - hoverBoundingRect.top;
@@ -59,13 +59,13 @@ const itemTarget = {
 
     monitor.getItem().index = hoverIndex;
   }
-};
+}
 
 function collectSource(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging()
-  };
+  }
 }
 
 function collectTarget(connect, monitor) {
@@ -73,12 +73,12 @@ function collectTarget(connect, monitor) {
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
     canDrop: monitor.canDrop()
-  };
+  }
 }
 
 class Item extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.toggleEditing = this.toggleEditing.bind(this)
     this.editTask = this.editTask.bind(this)
@@ -91,7 +91,7 @@ class Item extends Component {
     isDragging: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     boxIndex: PropTypes.number.isRequired,
-    isDropped: PropTypes.bool.isRequired,
+    isDropped: PropTypes.bool.isRequired
   }
 
   toggleEditing () {
@@ -117,11 +117,11 @@ class Item extends Component {
   }
 
   render() {
-    const { isDragging, connectDragSource, connectDropTarget } = this.props;
+    const { isDragging, connectDragSource, connectDropTarget } = this.props
 
     const taskText = this.props.item.text
     const editing = this.props.item.editing
-    let task = null;
+    let task = null
 
     if (editing) {
       task =
@@ -149,7 +149,8 @@ class Item extends Component {
     } else {
       if (this.props.item.id !== 0) {
         task =
-          connectDragSource(connectDropTarget(
+          // connectDragSource(connectDropTarget(
+          connectDragSource(
             <div className={isDragging ? 'draggin' : ''}>
               <span>{(this.props.index + 1) + '. ' + taskText}</span>
               <div className="pull-right item-buttons">
@@ -161,14 +162,14 @@ class Item extends Component {
                 </Button>
               </div>
             </div>
-          ));
+          );
       } else {
         task =
           connectDropTarget(
             <div className={'empty-box'}>
               <span>{taskText}</span>
             </div>
-          );
+          )
       }
     }
 
@@ -178,13 +179,13 @@ class Item extends Component {
       >
         {task}
       </ListGroupItem>
-    );
+    )
   }
 }
 
 Item.propTypes = {
   connectDragSource: PropTypes.func.isRequired,
   isDragging: PropTypes.bool.isRequired
-};
+}
 
-export default DragSource(props => props.type, itemSource, collectSource)(DropTarget(props => props.type, itemTarget, collectTarget)(Item));
+export default DragSource(props => props.type, itemSource, collectSource)(DropTarget(props => props.type, itemTarget, collectTarget)(Item))

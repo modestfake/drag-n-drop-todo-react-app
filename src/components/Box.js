@@ -1,7 +1,7 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import {Col, Panel, ListGroup} from 'react-bootstrap'
 import Item from './Item.js'
-import ItemTypes from './ItemTypes.js'
+import ItemTypes from '../ItemTypes.js'
 
 import {DropTarget} from 'react-dnd'
 

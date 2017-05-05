@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
 import Box from './Box'
-import AddItemForm from './components/AddItemForm'
+import AddItemForm from './AddItemForm'
 import { Grid, Row, Clearfix } from 'react-bootstrap'
 
-import ItemTypes from './ItemTypes.js'
+import ItemTypes from '../ItemTypes.js'
 
-import logo from './logo.svg'
-import './App.css'
+import logo from '../logo.svg'
+import '../App.css'
 
 const boxesMeta = [
   {
