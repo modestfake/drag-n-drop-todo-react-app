@@ -112,7 +112,7 @@ class Item extends Component {
 
   handleKeyPress (e) {
     if (e.key === 'Enter') {
-      this.handleEdit()
+      this.editTask()
     }
   }
 

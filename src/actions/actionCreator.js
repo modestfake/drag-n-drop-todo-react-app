@@ -1,7 +1,7 @@
 export const addTask = (value) => ({
   type: 'ADD_TASK',
   item: {
-    id: new Date().getTime(),
+    id: new Date().valueOf(),
     text: value,
     editing: false
   }

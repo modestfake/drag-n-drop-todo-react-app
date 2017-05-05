@@ -1,16 +1,19 @@
 import { createStore } from 'redux'
 import reducer from './reducers/'
+import { loadState, saveState } from './localStorage'
+import throttle from 'lodash.throttle'
 
-const lsData = window.localStorage.getItem('tasks')
+const initialState = loadState()
 
-const defaultState = {
-  boxes: [
-    [], [], [], []
-  ]
-}
+const store = createStore(
+  reducer,
+  initialState,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
-const initialState = lsData !== null ? lsData : defaultState
-
-const store = createStore(reducer, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+store.subscribe(throttle(() => {
+  saveState(store.getState())
+  console.log('Saved')
+}), 1000)
 
 export default store

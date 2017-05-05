@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "lodash.throttle": "^4.1.1",
     "mobx": "^3.1.9",
     "mobx-react": "^4.1.5",
     "react": "^15.4.2",
