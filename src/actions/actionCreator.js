@@ -26,6 +26,10 @@ export const removeTask = (box, taskIndex) => ({
   taskIndex
 })
 
-export const moveTask = () => ({
-  type: 'MOVE_TASK'
+export const moveTask = (prevBoxIndex, newBoxIndex, prevItemIndex, newItemIndex) => ({
+  type: 'MOVE_TASK',
+  prevBoxIndex,
+  newBoxIndex,
+  prevItemIndex,
+  newItemIndex
 })

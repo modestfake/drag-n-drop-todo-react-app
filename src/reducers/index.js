@@ -74,8 +74,34 @@ const boxes = (state = [], action) => {
         ...state.slice(boxIndex + 1)
       ]
     case 'MOVE_TASK':
-      console.log('Move')
-      return state
+      let draggedItem = null
+      const updatedPrevBox = state[action.prevBoxIndex].filter((item, index) => {
+        if (action.prevItemIndex === index) {
+          draggedItem = Object.assign({}, item)
+          return false
+        }
+        return item
+      })
+      const newArrayWithoutItem = [
+        ...state.slice(0, action.prevBoxIndex),
+        updatedPrevBox,
+        ...state.slice(action.prevBoxIndex + 1)
+      ]
+      const updatedTargetBox = [
+        ...newArrayWithoutItem[action.newBoxIndex].slice(0, action.newItemIndex),
+        draggedItem,
+        ...newArrayWithoutItem[action.newBoxIndex].slice(action.newItemIndex)
+      ]
+      console.log([
+        ...newArrayWithoutItem.slice(0, action.newBoxIndex),
+        updatedTargetBox,
+        ...newArrayWithoutItem.slice(action.newBoxIndex + 1)
+      ])
+      return [
+        ...newArrayWithoutItem.slice(0, action.newBoxIndex),
+        updatedTargetBox,
+        ...newArrayWithoutItem.slice(action.newBoxIndex + 1)
+      ]
     default:
       return state
   }
