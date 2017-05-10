@@ -31,13 +31,7 @@ const box = (state, action) => {
         }
       })
     case 'REMOVE_TASK':
-      return state.filter((item, index) => {
-        if (index !== action.taskIndex) {
-          return item
-        }
-
-        return false
-      })
+      return state.filter((item, index) => index !== action.taskIndex)
     default:
       return state
   }
